@@ -1,0 +1,157 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# # Author:- SAURABH PARAB
+# 
+
+# # The Sparks Foundation
+
+# # Linear Regression 
+
+# Predict the percentage of an student based on the no. of study hours.
+# What will be predicted score if a student studies for 9.25 hrs/ day?
+
+# # Import the necessary libraries
+# 
+
+# In[1]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+# # Read the data into a frame
+# 
+
+# In[3]:
+
+
+data=pd.read_csv(r"C:\Users\Saurabh\Desktop\TSF\student_scores - student_scores.csv",header = 0)  #using the header from the data file
+data.head(5)
+
+
+# # Exploring the data
+
+# In[4]:
+
+
+print(data.dtypes)
+print()
+print(data.shape)
+print()
+print(data.describe())
+
+
+# # Checking for missing values
+
+# In[21]:
+
+
+data.isnull().sum()
+
+
+# # Checking for Outliers
+
+# In[5]:
+
+
+#There should no outliers
+data.boxplot(column="Hours")
+
+
+# In[6]:
+
+
+#Every ind variable should have a linear relationship with the dep variable
+
+g=sns.pairplot(data, kind='reg', x_vars='Hours',y_vars = ['Scores'])#kind=reg means we want thr regression line
+g.fig.set_size_inches(10,10)
+
+
+# In[7]:
+
+
+#create X with those variables that satisfy the assumption of linearity and Y
+X = data.iloc[:, :-1].values  
+y = data.iloc[:, 1].values  
+
+
+# In[8]:
+
+
+#The dependent variable should be approximately normally distributed
+
+sns.distplot(y,hist = True)
+
+
+# # Spliting the Data into Train and Test
+
+# In[9]:
+
+
+from sklearn.model_selection import train_test_split  
+X_train, X_test, y_train, y_test = train_test_split(X, y, 
+                            test_size=0.2, random_state=0) 
+
+
+# # Model Building
+
+# In[22]:
+
+
+from sklearn.linear_model import LinearRegression  
+lm = LinearRegression()  
+lm.fit(X_train, y_train) 
+print(X_test) # Testing data - In Hours
+y_pred = lm.predict(X_test) # Predicting the scores
+
+
+# In[12]:
+
+
+# Comparing Actual vs Predicted values
+df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})  
+df 
+
+
+# # Model Evaluation
+
+# In[20]:
+
+
+from sklearn.metrics import r2_score,mean_squared_error,mean_absolute_error
+import numpy as np
+r2=r2_score(y_test,y_pred)
+print('R_Sqaure',r2)
+
+adjusted_r_squared =1 - (1-r2)*(len(y)-1)/(len(y)-X.shape[1]-1)
+print("Adjusted R Square:",adjusted_r_squared)
+
+print('Mean Absolute Error:', ..
+      metrics.mean_absolute_error(y_test, y_pred)) 
+print('Mean Sqaured Error:', 
+      metrics.mean_squared_error(y_test, y_pred)) 
+print('Root Mean Squared Error:',np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+
+
+# # Testing  with our own data
+# 
+
+# In[13]:
+
+
+hours = np.array(9.25)
+hours=hours.reshape((-1,1))
+own_pred = lm.predict(hours)
+print("No of Hours = {}".format(hours))
+print("Predicted Score = {}".format(own_pred[0]))
+
+
+# In[ ]:
+
+
+
+
